@@ -8,11 +8,10 @@ const AppleComponent = ({ apple}) => {
   const data = [apple];
   // console.log("data",data);
   const options = ["256GB", "512GB", "1080GB"];
-  console.log(options)
-  //console.log(select)
+  //console.log(options)
   const { cart, setCart } = useContext(CartItems);
   const [selected, setSelected] = useState(false);
-  console.log(selected)
+  // console.log(selected)
   const [size, setSize] = useState('Medium')
   const [additems, setAddItems] = useState(0);
   const eligible_for_size = (item) => {return ['iphone 12', 'iphone 13', 'iphone 14', 'macbook air'].includes(item.name)}
@@ -21,11 +20,6 @@ const AppleComponent = ({ apple}) => {
     
     setSelected(true);
     
-
-    if (additems === 0) {
-      setAddItems(1);
-    }
-
     const ItemPresent = cart.find((item) => item.id === apple.id);
     if (ItemPresent) {
       setCart(
@@ -35,7 +29,10 @@ const AppleComponent = ({ apple}) => {
             : x
         )
       );
-    } else {
+    } else { 
+      if(additems !== 0){
+        setAddItems(0);
+      }
       setCart([...cart, { ...apple,quantity: 1,size:size }]);
       
     }
@@ -48,7 +45,6 @@ const AppleComponent = ({ apple}) => {
       Toast.hide(toast);
     }, 2500);
     setAddItems(additems + 1);
-    
     
   };
 
@@ -131,7 +127,7 @@ const AppleComponent = ({ apple}) => {
               )
             }
               
-              {selected ? (
+              {cart.find((x) => x.id === item.id) ? (
                 <Pressable
                   style={{
                     backgroundColor: "#03C03C",
