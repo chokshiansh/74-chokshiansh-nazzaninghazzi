@@ -77,6 +77,7 @@ const MainScreen = () => {
             left: "67%",
             borderRadius: 6,
           }}
+          testID="goToCartButton"
         >
           <Text
             style={{

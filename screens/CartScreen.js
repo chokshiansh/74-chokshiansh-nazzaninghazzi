@@ -186,7 +186,8 @@ const CartScreen = () => {
                     
                   </View>
                 </View>
-                <Pressable  onPress={() => {navigation.replace("Cart", {removeSelected: "true", removedItem: item})}} style={{
+                <Pressable  onPress={() => {navigation.replace("Cart", {removeSelected: "true", removedItem: item})}}
+                 style={{
                   backgroundColor: "#03C03C",
                   padding: 5,
                   marginLeft: "30%",
@@ -194,7 +195,8 @@ const CartScreen = () => {
                   marginBottom:"5%",
                   borderRadius: 4,
                   
-                }}> 
+                }}
+                testID="removeButton"> 
                 <Text style={{ marginTop: "5%", color: "white", fontWeight: "bold", size:10 }}>
                   Remove
                 </Text>
@@ -328,6 +330,7 @@ const CartScreen = () => {
             padding: 10,
             borderRadius: 5,
           }}
+          testID="goToOrderButton"
 
         >
           

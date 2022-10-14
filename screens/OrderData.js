@@ -144,7 +144,8 @@ const OrderData = () => {
             bottom: "9%",
             left: 127,
             borderRadius: 6,
-          }}>
+          }}
+          testID="startNewButton">
             <Text>
               Start a new order
             </Text>
