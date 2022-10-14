@@ -124,7 +124,7 @@ const CartScreen = () => {
     //setCart([])
   }
   const addToCart = () => {
-    setSelected(true);
+   // setSelected(true);
 
     if (additems === 0) {
       setAddItems(1);
@@ -155,7 +155,7 @@ const CartScreen = () => {
   const removeFromCart = () => {
     const ItemPresent = cart.find((item) => item.id === cart.id);
     if (additems === 1) {
-      setSelected(false);
+     // setSelected(false);
 
       setCart(cart.filter((x) => x.id !== cart.id));
     } else {
@@ -220,73 +220,7 @@ const CartScreen = () => {
                   <Text style={{ color: "white", fontSize: 16 }}>
                     ${item.price} x {item.quantity}
                   </Text>
-                  {selected ? (
-                <Pressable
-                  style={{
-                    backgroundColor: "#03C03C",
-                    padding: 2,
-                    marginLeft: 15,
-                    borderRadius: 4,
-
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <Pressable onPress={removeFromCart}>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        color: "white",
-                        paddingHorizontal: 10,
-
-                        fontWeight: "600",
-                      }}
-                    >
-                      -
-                    </Text>
-                  </Pressable>
-
-                  <Pressable>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        color: "white",
-                        paddingHorizontal: 5,
-                        fontWeight: "600",
-                      }}
-                    >
-                      {additems}
-                    </Text>
-                  </Pressable>
-
-                  <Pressable onPress={addToCart}>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        color: "white",
-                        paddingHorizontal: 10,
-                        fontWeight: "600",
-                      }}
-                    >
-                      +
-                    </Text>
-                  </Pressable>
-                </Pressable>
-              ) : (
-                <Pressable
-                  onPress={addToCart}
-                  style={{
-                    backgroundColor: "#03C03C",
-                    padding: 5,
-                    marginLeft: 15,
-                    borderRadius: 4,
-                  }}
-                >
-                  <Text style={{ color: "white", fontWeight: "bold" }}>
-                    Add To Cart
-                  </Text>
-                </Pressable>
-              )}
+                  
                 </View>
               </View>
             </Pressable>

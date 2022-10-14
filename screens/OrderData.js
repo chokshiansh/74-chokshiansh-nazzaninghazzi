@@ -5,7 +5,8 @@ import {
   Pressable,
   Image,
   ScrollView,
-  SafeAreaView
+  SafeAreaView,
+  DevSettings
 } from "react-native";
 import React, {useContext} from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -20,10 +21,9 @@ const OrderData = () => {
   
   const reset= () => {
     
-    navigation.navigate("Main")
-    setCart([])
+    DevSettings.reload()
+    
   }
-  console.log(cart_percentage == undefined)
   return (
     <SafeAreaView style={{ backgroundColor: "white", flex: 1 }}>
       <Text style={{top: "5%", left: "5%", fontWeight:"bold", fontSize:"18px"}}>Order Summary:</Text>

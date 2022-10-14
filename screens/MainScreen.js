@@ -13,6 +13,7 @@ import { CartItems } from "../Context";
 import {firebase} from '../firebase'
 import AppleComponent from "../components/AppleComponent";
 
+
 let main_total_quantity = 0;
 const MainScreen = () => {
     const [products, setProducts] = useState([]);
@@ -46,7 +47,6 @@ const MainScreen = () => {
     }, [] );
   const navigation = useNavigation();
   const { cart, setCart } = useContext(CartItems);
-  
   const total_quantity = cart.reduce((acc, item) => {
     return acc + item.quantity;
   }, 0);
