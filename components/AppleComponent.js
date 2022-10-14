@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import ModalDropdown from "react-native-modal-dropdown";
 import { CartItems } from "../Context";
 import Toast from "react-native-root-toast";
+import { useEffect } from "react";
 
 const AppleComponent = ({ apple}) => {
   const data = [apple];
@@ -17,7 +18,7 @@ const AppleComponent = ({ apple}) => {
   const eligible_for_size = (item) => {return ['iphone 12', 'iphone 13', 'iphone 14', 'macbook air'].includes(item.name)}
   
   const addToCart = () => {
-    
+    let addItemsUpdate = 0
     setSelected(true);
     
     const ItemPresent = cart.find((item) => item.id === apple.id);
@@ -31,8 +32,8 @@ const AppleComponent = ({ apple}) => {
       );
     } else { 
       if(additems !== 0){
-        setAddItems(0);
-      }
+        addItemsUpdate = additems
+      }      
       setCart([...cart, { ...apple,quantity: 1,size:size }]);
       
     }
@@ -44,7 +45,7 @@ const AppleComponent = ({ apple}) => {
     setTimeout(function () {
       Toast.hide(toast);
     }, 2500);
-    setAddItems(additems + 1);
+    setAddItems(additems - addItemsUpdate + 1);
     
   };
 
