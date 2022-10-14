@@ -14,19 +14,24 @@ import { Entypo } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import ModalDropdown from "react-native-modal-dropdown";
+import Toast from "react-native-root-toast";
+let cart_percentage, cart_shipping, cart_total, cart_tax, cart_temp;
+
 const CartScreen = () => {
-  
+  console.log(cart_percentage)
   const [tax, setTax] = useState(0);
   const [percentage, setPercentage] = useState(0);
 
   const [discount, setDiscount] = useState([]);
   const [shipping, setShipping] = useState(0);
   const [show, setShow] = useState(false)
+  const [selected, setSelected] = useState(true);
   const [province, setProvince] = useState([]);
   const provRef = firebase.firestore().collection('province');
   const DisRef = firebase.firestore().collection('discount');
   const [options, setOptions] = useState([])
   const [dcodes, setDcodes] = useState([])
+  const [additems, setAddItems] = useState(1);
   useEffect(() =>{
     async function fetchData() {
       provRef.onSnapshot(
@@ -82,39 +87,94 @@ const CartScreen = () => {
     .map((item) => Number((item.price * item.quantity)))
     .reduce((prev, curr) => prev + curr, 0);
   
-  
+  cart_total = total
   const addTax = (name) => {
     province.map((item) => {
       if (name === item.name) {
+        cart_tax = item.tax
         setTax(item.tax)
         setShipping(item.shipping)
+        cart_shipping = item.shipping
       }
     }
     )
-  }  
+  }
 
   const addDiscount = (name) => {
     discount.map((item) => {
-      console.log(item)
-      console.log(item.name)
-      console.log(item.name == name)
-      console.log(item.percentage)
+      
       if (name === item.name) {
         setPercentage(item.percentage)
+        cart_percentage = item.percentage
       }
     }
     )
   } 
   const calculateTotal = () => {
-    const temp = ((((total+shipping) * (tax/100)) + (total+shipping))* ((100-percentage)/100 ))
+    const temp = ((((total+shipping) * (tax/100)) + (total+shipping))* ((100-percentage)/100 )).toFixed(2)
+    cart_temp = temp
     return(
+      
       temp
     )
   }
   const placeOrder = () => {
     navigation.navigate("Order")
 
-    setCart([])
+    //setCart([])
+  }
+  const addToCart = () => {
+    setSelected(true);
+
+    if (additems === 0) {
+      setAddItems(1);
+    }
+
+    const ItemPresent = cart.find((item) => item.id === cart.id);
+    if (ItemPresent) {
+      setCart(
+        cart.map((x) =>
+          x.id === cart.id
+            ? { ...ItemPresent, quantity: ItemPresent.quantity + 1 }
+            : x
+        )
+      );
+    } else {
+      setCart([...cart, { ...cart,quantity: 1 }]);
+    }
+    let toast = Toast.show("Added to Cart", {
+      duration: Toast.durations.LONG,
+      position: Toast.positions.BOTTOM,
+    });
+    setTimeout(function () {
+      Toast.hide(toast);
+    }, 2500);
+    setAddItems(additems + 1);
+  };
+
+  const removeFromCart = () => {
+    const ItemPresent = cart.find((item) => item.id === cart.id);
+    if (additems === 1) {
+      setSelected(false);
+
+      setCart(cart.filter((x) => x.id !== cart.id));
+    } else {
+      setCart(
+        cart.map((x) =>
+          x.id === cart.id
+            ? { ...ItemPresent, quantity: ItemPresent.quantity - 1 }
+            : x
+        )
+      );
+    }
+    setAddItems(Math.max(0, additems - 1));
+    let toast = Toast.show("Removed from Cart", {
+      duration: Toast.durations.LONG,
+      position: Toast.positions.BOTTOM,
+    });
+    setTimeout(function () {
+      Toast.hide(toast);
+    }, 2500);
   }
   
 
@@ -155,20 +215,84 @@ const CartScreen = () => {
                     <Text style={{ color: "white", fontSize: 17 }}>
                       {item.size}
                     </Text>
-                    <Text style={{ color: "white", fontSize: 15 }}>
-                      {" "}
-                      | {item.info.substr(0, 25) + "..."}
-                    </Text>
                   </View>
 
                   <Text style={{ color: "white", fontSize: 16 }}>
-                    ${item.price * item.quantity}
+                    ${item.price} x {item.quantity}
                   </Text>
+                  {selected ? (
+                <Pressable
+                  style={{
+                    backgroundColor: "#03C03C",
+                    padding: 2,
+                    marginLeft: 15,
+                    borderRadius: 4,
+
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Pressable onPress={removeFromCart}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: "white",
+                        paddingHorizontal: 10,
+
+                        fontWeight: "600",
+                      }}
+                    >
+                      -
+                    </Text>
+                  </Pressable>
+
+                  <Pressable>
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        color: "white",
+                        paddingHorizontal: 5,
+                        fontWeight: "600",
+                      }}
+                    >
+                      {additems}
+                    </Text>
+                  </Pressable>
+
+                  <Pressable onPress={addToCart}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: "white",
+                        paddingHorizontal: 10,
+                        fontWeight: "600",
+                      }}
+                    >
+                      +
+                    </Text>
+                  </Pressable>
+                </Pressable>
+              ) : (
+                <Pressable
+                  onPress={addToCart}
+                  style={{
+                    backgroundColor: "#03C03C",
+                    padding: 5,
+                    marginLeft: 15,
+                    borderRadius: 4,
+                  }}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    Add To Cart
+                  </Text>
+                </Pressable>
+              )}
                 </View>
               </View>
             </Pressable>
             
           ))}
+
           <View>
           <Modal animationType="slide"
         transparent={true}
@@ -199,41 +323,54 @@ const CartScreen = () => {
         </View>
         </View>
       </Modal>
-                <ModalDropdown
+      
+
+
+         </View>
+              
+          
+        </ScrollView>
+       
+
+       
+      </View>
+      
+        
+        <View
+          style={{ margin: 10, flexDirection: "row", alignItems: "center" }}
+        >
+          
+        </View>
+        <View style={{borderBottomColor :"black", borderBottomWidth :"1px"}}>
+            <Text style={{ sizefontWeight: "bold", fontSize: 17}}>
+                Select province:
+            </Text>
+            <Text> </Text>
+
+            <ModalDropdown
                   dropdownStyle={{ width: 400, height: 300 }}
                   style={{ width: 500 }}
-                  defaultValue={
-                    <Text style={{ sizefontWeight: "bold", fontSize: 15}}>
-                    Select province:
-                    </Text>
-                    }
+                  defaultValue={"None⌄"}
                   options={options}
                   onSelect={(e) => addTax(String(options[e]))}
                 ></ModalDropdown>
-              </View>
-              <View>
+              
+              <Text>   </Text>
+              <Text style={{ sizefontWeight: "bold", fontSize: 17}}>
+                Select Discount:
+            </Text>
+            <Text> </Text>
+
                 <ModalDropdown
                   dropdownStyle={{ width: 400, height: 300 }}
                   style={{ width: 500 }}
-                  defaultValue={
-                    <Text style={{ sizefontWeight: "bold", fontSize: 15}}>
-                    Select discount:
-                    </Text>
-                    }
+                  defaultValue={"None⌄"}
                   options={dcodes}
                   onSelect={(f) => addDiscount(String(dcodes[f]))}
                 ></ModalDropdown>
               </View>
-          
-        </ScrollView>
-      </View>
-      
-        <View style={{ height: 200 }}>
-        <View
-          style={{ margin: 10, flexDirection: "row", alignItems: "center" }}
-        >
-        </View>
-
+              
+       <View style={{ height: 200 }}>
         <View
           style={{ margin: 10, flexDirection: "row", alignItems: "center" }}
         >
@@ -303,5 +440,6 @@ const CartScreen = () => {
 };
 
 export default CartScreen;
+export {cart_percentage, cart_shipping, cart_total, cart_tax, cart_temp}
 
 const styles = StyleSheet.create({});

@@ -13,7 +13,7 @@ import { CartItems } from "../Context";
 import {firebase} from '../firebase'
 import AppleComponent from "../components/AppleComponent";
 
-
+let main_total_quantity = 0;
 const MainScreen = () => {
     const [products, setProducts] = useState([]);
     const prodRef = firebase.firestore().collection('products');
@@ -46,6 +46,12 @@ const MainScreen = () => {
     }, [] );
   const navigation = useNavigation();
   const { cart, setCart } = useContext(CartItems);
+  
+  const total_quantity = cart.reduce((acc, item) => {
+    return acc + item.quantity;
+  }, 0);
+  main_total_quantity = total_quantity
+  
   const total = cart
     .map((item) => Number(item.price * item.quantity))
 
@@ -55,7 +61,8 @@ const MainScreen = () => {
   return (
     <SafeAreaView>
       <FlatList
-        numColumns={2}
+        style={{top: "6%"}}
+        numColumns={1}
         showsVerticalScrollIndicator={false}
         data={products}
         renderItem={({key, item }) => <AppleComponent apple={item} />}
@@ -64,11 +71,12 @@ const MainScreen = () => {
         <Pressable
         onPress={() => navigation.navigate("Cart")}
           style={{
+            
             backgroundColor: "green",
             padding: 10,
             position: "absolute",
-            bottom: 100,
-            left: 150,
+            bottom: "97%",
+            left: "67%",
             borderRadius: 6,
           }}
         >
@@ -81,7 +89,7 @@ const MainScreen = () => {
               
             }}
           >
-            Go to Cart
+            ({total_quantity}) Go to Cart
           </Text>
         </Pressable>
       )}
@@ -90,5 +98,6 @@ const MainScreen = () => {
 };
 
 export default MainScreen;
-
+export {main_total_quantity}
 const styles = StyleSheet.create({});
+
